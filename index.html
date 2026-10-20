@@ -1,0 +1,582 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>健身计划 · 四天上下肢分化训练</title>
+<style>
+:root {
+  --bg: #0f0f0f;
+  --card: #1a1a1a;
+  --card-hover: #222;
+  --accent: #f97316;
+  --accent2: #22c55e;
+  --accent3: #3b82f6;
+  --text: #e5e5e5;
+  --text2: #a3a3a3;
+  --border: #2a2a2a;
+  --radius: 14px;
+  --shadow: 0 4px 24px rgba(0,0,0,.4);
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ── Header ── */
+header {
+  background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+  padding: 48px 20px 36px;
+  text-align: center;
+  border-bottom: 3px solid var(--accent);
+}
+header h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  letter-spacing: -.5px;
+}
+header h1 span { color: var(--accent); }
+header p {
+  color: var(--text2);
+  margin-top: 8px;
+  font-size: .95rem;
+}
+
+/* ── Progress Bar ── */
+.progress-wrap {
+  max-width: 700px;
+  margin: -16px auto 0;
+  padding: 0 16px;
+  position: relative;
+  z-index: 2;
+}
+.progress-bar {
+  background: var(--card);
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent2), #16a34a);
+  border-radius: 999px;
+  transition: width .5s ease;
+  width: 0%;
+}
+.progress-label {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text2);
+  font-size: .78rem;
+  margin-top: 6px;
+  padding: 0 4px;
+}
+
+/* ── Week Selector ── */
+.week-selector {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 24px 16px 0;
+  flex-wrap: wrap;
+}
+.week-btn {
+  padding: 8px 20px;
+  border: 2px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  font-size: .85rem;
+  transition: all .2s;
+}
+.week-btn:hover { border-color: var(--accent); color: var(--text); }
+.week-btn.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 700; }
+
+/* ── Main Grid ── */
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px 80px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 20px;
+}
+
+/* ── Day Card ── */
+.day-card {
+  background: var(--card);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border);
+  transition: transform .2s, border-color .2s;
+}
+.day-card:hover { border-color: #444; transform: translateY(-2px); }
+
+.day-header {
+  padding: 18px 20px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  user-select: none;
+  transition: background .2s;
+}
+.day-header:hover { background: var(--card-hover); }
+
+.day-tag {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.day-icon {
+  font-size: 1.6rem;
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  display: flex; align-items: center; justify-content: center;
+}
+.icon-upper { background: rgba(249,115,22,.15); }
+.icon-lower { background: rgba(59,130,246,.15); }
+
+.day-title { font-weight: 700; font-size: 1.05rem; }
+.day-sub  { font-size: .78rem; color: var(--text2); }
+
+.day-meta { text-align: right; }
+.day-meta .duration { font-size: .82rem; color: var(--accent); font-weight: 600; }
+.day-meta .arrow { font-size: .8rem; color: var(--text2); transition: transform .3s; display: inline-block; }
+.day-card.open .arrow { transform: rotate(180deg); }
+
+.day-body {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height .4s ease;
+}
+.day-card.open .day-body { max-height: 1200px; }
+
+.day-inner { padding: 0 20px 20px; }
+
+/* ── Warmup ── */
+.warmup-section {
+  background: rgba(249,115,22,.06);
+  border-radius: 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+}
+.warmup-title {
+  font-size: .78rem;
+  color: var(--accent);
+  font-weight: 700;
+  margin-bottom: 6px;
+  letter-spacing: 1px;
+}
+.warmup-list {
+  list-style: none;
+  font-size: .82rem;
+  color: var(--text2);
+}
+.warmup-list li::before { content: "▸ "; color: var(--accent); }
+
+/* ── Exercise Items ── */
+.ex-list { list-style: none; display: flex; flex-direction: column; gap: 8px; }
+
+.ex-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  background: rgba(255,255,255,.03);
+  border-radius: 10px;
+  transition: background .2s;
+  cursor: pointer;
+}
+.ex-item:hover { background: rgba(255,255,255,.06); }
+
+.ex-check {
+  width: 22px; height: 22px;
+  border: 2px solid #555;
+  border-radius: 6px;
+  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .2s;
+  font-size: .75rem;
+  color: transparent;
+}
+.ex-item.done .ex-check {
+  background: var(--accent2);
+  border-color: var(--accent2);
+  color: #000;
+}
+.ex-info { flex: 1; min-width: 0; }
+.ex-name { font-size: .9rem; font-weight: 600; }
+.ex-detail { font-size: .75rem; color: var(--text2); margin-top: 2px; }
+.ex-sets { font-size: .82rem; color: var(--accent); font-weight: 700; white-space: nowrap; }
+
+/* ── Timer ── */
+.timer-section {
+  margin-top: 14px;
+  text-align: center;
+}
+.timer-display {
+  font-size: 2.2rem;
+  font-weight: 800;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 2px;
+  color: var(--accent3);
+}
+.timer-label { font-size: .75rem; color: var(--text2); margin-bottom: 4px; }
+.timer-btns { display: flex; gap: 8px; justify-content: center; margin-top: 8px; }
+.timer-btn {
+  padding: 6px 16px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  font-size: .8rem;
+  transition: all .2s;
+}
+.timer-btn:hover { border-color: var(--accent3); color: var(--accent3); }
+.timer-btn.active { background: var(--accent3); border-color: var(--accent3); color: #fff; }
+.timer-presets { display: flex; gap: 6px; justify-content: center; margin-top: 10px; flex-wrap: wrap; }
+.preset-btn {
+  padding: 4px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  font-size: .74rem;
+  transition: all .2s;
+}
+.preset-btn:hover { border-color: #666; color: var(--text); }
+
+/* ── Reset Btn ── */
+.reset-section {
+  text-align: center;
+  margin-top: 20px;
+  padding: 0 16px 40px;
+}
+.reset-btn {
+  padding: 10px 28px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--text2);
+  cursor: pointer;
+  font-size: .82rem;
+  transition: all .2s;
+}
+.reset-btn:hover { border-color: #ef4444; color: #ef4444; }
+
+/* ── Footer ── */
+footer {
+  text-align: center;
+  color: #444;
+  font-size: .75rem;
+  padding: 20px;
+  border-top: 1px solid var(--border);
+}
+
+/* ── Responsive ── */
+@media (max-width: 450px) {
+  main { grid-template-columns: 1fr; padding: 16px 10px 60px; }
+  header h1 { font-size: 1.6rem; }
+  .day-inner { padding: 0 14px 16px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>力量训练<span>计划</span></h1>
+  <p>四天上下肢分化 · 周一/周二/周四/周五</p>
+</header>
+
+<div class="progress-wrap">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="progress-label"><span id="progressText">本周完成 0/20</span><span id="progressPct">0%</span></div>
+</div>
+
+<div class="week-selector" id="weekSelector"></div>
+
+<main id="dayCards"></main>
+
+<div class="reset-section">
+  <button class="reset-btn" onclick="resetWeek()">↺ 重置本周进度</button>
+</div>
+
+<footer>数据保存在浏览器本地 · 不会上传</footer>
+
+<script>
+// ═══════════════ DATA ═══════════════
+const planData = [
+  {
+    id: "mon", day: "周一", type: "upper", icon: "🏋️", iconClass: "icon-upper",
+    title: "上肢训练 · 推", sub: "胸 / 肩 / 三头", duration: "~1.5h",
+    warmup: ["平板支撑摸肩 每侧10次", "弹力带绕肩 20次", "空杆卧推 ×5", "40kg 卧推 ×5"],
+    exercises: [
+      { name: "卧推", detail: "极~90% 目标60kg", sets: "5×4组" },
+      { name: "坐姿推胸", detail: "8-10次", sets: "4组" },
+      { name: "实力推", detail: "20~25kg", sets: "6×4组" },
+      { name: "哑铃单手火箭推 (爆发推)", detail: "12.5kg", sets: "8×4组" },
+      { name: "健腹轮跪姿", detail: "", sets: "20×4组" }
+    ]
+  },
+  {
+    id: "tue", day: "周二", type: "lower", icon: "🦵", iconClass: "icon-lower",
+    title: "下肢训练 · 后链", sub: "硬拉 / 腘绳 / 臀", duration: "~1.5h",
+    warmup: ["壶铃深蹲 10个", "壶铃摇摆 20次", "激治背阔肌", "硬拉热身: 空杆×12"],
+    exercises: [
+      { name: "硬拉", detail: "正式 70~80kg", sets: "5×4组" },
+      { name: "负重行走 (农夫走)", detail: "", sets: "8×4组" },
+      { name: "单腿硬拉", detail: "哑铃", sets: "8×4组/侧" },
+      { name: "单腿臀桥", detail: "10kg杠铃片", sets: "8×4组/侧" },
+      { name: "脚踝训练", detail: "", sets: "—" }
+    ]
+  },
+  {
+    id: "thu", day: "周四", type: "upper", icon: "💪", iconClass: "icon-upper",
+    title: "上肢训练 · 拉", sub: "背 / 二头 / 核心", duration: "~1.5h",
+    warmup: ["平板支撑摸肩 每侧10次", "弹力带绕肩 20次"],
+    exercises: [
+      { name: "引体向上 (窄距)", detail: "", sets: "8×4组" },
+      { name: "上斜交替划船", detail: "", sets: "8×4组" },
+      { name: "两点式划船", detail: "", sets: "8×4组" },
+      { name: "反向划船", detail: "力竭", sets: "4组" },
+      { name: "健腹轮跪姿", detail: "", sets: "20×4组" }
+    ]
+  },
+  {
+    id: "fri", day: "周五", type: "lower", icon: "🔥", iconClass: "icon-lower",
+    title: "下肢训练 · 前链", sub: "深蹲 / 股四 / 爆发", duration: "~1.5h",
+    warmup: ["壶铃深蹲 10个", "壶铃摇摆 20次", "激治背阔肌", "深蹲热身: 空杆×12"],
+    exercises: [
+      { name: "跳深", detail: "爆发力训练", sets: "6×4组" },
+      { name: "深蹲", detail: "正式 60~70kg", sets: "5×4组" },
+      { name: "保加利亚单腿蹲", detail: "10kg 壶铃", sets: "8×4组/侧" },
+      { name: "高脚杯深蹲", detail: "20kg 哑铃", sets: "8×4组" },
+      { name: "脚踝训练", detail: "", sets: "—" }
+    ]
+  }
+];
+
+// ═══════════════ STATE ═══════════════
+const STORAGE_KEY = 'fitness_plan_data';
+let state = {};
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) state = JSON.parse(raw);
+  } catch(e) { state = {}; }
+}
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+function getWeekKey(weekOffset = 0) {
+  const now = new Date();
+  now.setDate(now.getDate() + weekOffset * 7);
+  const monday = new Date(now);
+  monday.setDate(now.getDate() - (now.getDay() || 7) + 1);
+  const y = monday.getFullYear();
+  const m = String(monday.getMonth() + 1).padStart(2, '0');
+  const d = String(monday.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
+
+function ensureWeek(k) {
+  if (!state[k]) state[k] = {};
+  planData.forEach(day => {
+    if (!state[k][day.id]) state[k][day.id] = Array(day.exercises.length).fill(false);
+  });
+}
+
+// ═══════════════ RENDER ═══════════════
+let currentWeekOffset = 0;
+
+function getActiveWeekKey() { return getWeekKey(currentWeekOffset); }
+
+function renderWeekSelector() {
+  const container = document.getElementById('weekSelector');
+  const weeks = [-1, 0, 1]; // last, this, next
+  const labels = ['上周', '本周', '下周'];
+  container.innerHTML = weeks.map((off, i) => {
+    const wk = getWeekKey(off);
+    const cls = off === currentWeekOffset ? 'active' : '';
+    return `<button class="week-btn ${cls}" onclick="switchWeek(${off})">${labels[i]}<br><small>${wk}</small></button>`;
+  }).join('');
+}
+
+function switchWeek(offset) {
+  currentWeekOffset = offset;
+  const wk = getActiveWeekKey();
+  ensureWeek(wk);
+  saveState();
+  renderAll();
+}
+
+function toggleExercise(dayId, exIdx) {
+  const wk = getActiveWeekKey();
+  ensureWeek(wk);
+  state[wk][dayId][exIdx] = !state[wk][dayId][exIdx];
+  saveState();
+  renderAll();
+}
+
+function countCompleted(wk) {
+  let total = 0, done = 0;
+  planData.forEach(day => {
+    const arr = state[wk]?.[day.id] || [];
+    arr.forEach(v => { total++; if (v) done++; });
+  });
+  return { done, total };
+}
+
+function renderAll() {
+  const wk = getActiveWeekKey();
+  ensureWeek(wk);
+
+  // Progress
+  const { done, total } = countCompleted(wk);
+  const pct = total > 0 ? Math.round(done / total * 100) : 0;
+  document.getElementById('progressFill').style.width = pct + '%';
+  document.getElementById('progressText').textContent = `本周完成 ${done}/${total}`;
+  document.getElementById('progressPct').textContent = pct + '%';
+
+  // Week selector
+  renderWeekSelector();
+
+  // Cards
+  const container = document.getElementById('dayCards');
+  container.innerHTML = planData.map((day, di) => {
+    const checks = state[wk]?.[day.id] || Array(day.exercises.length).fill(false);
+    const dayDone = checks.filter(Boolean).length;
+    const dayTotal = checks.length;
+
+    return `
+    <div class="day-card open" id="card-${day.id}">
+      <div class="day-header" onclick="document.getElementById('card-${day.id}').classList.toggle('open')">
+        <div class="day-tag">
+          <div class="day-icon ${day.iconClass}">${day.icon}</div>
+          <div>
+            <div class="day-title">${day.day} · ${day.title}</div>
+            <div class="day-sub">${day.sub} &nbsp;·&nbsp; ✅ ${dayDone}/${dayTotal}</div>
+          </div>
+        </div>
+        <div class="day-meta">
+          <div class="duration">${day.duration}</div>
+          <span class="arrow">▼</span>
+        </div>
+      </div>
+      <div class="day-body">
+        <div class="day-inner">
+          <div class="warmup-section">
+            <div class="warmup-title">🔥 热身</div>
+            <ul class="warmup-list">
+              ${day.warmup.map(w => `<li>${w}</li>`).join('')}
+            </ul>
+          </div>
+          <ul class="ex-list">
+            ${day.exercises.map((ex, ei) => `
+              <li class="ex-item ${checks[ei] ? 'done' : ''}" onclick="toggleExercise('${day.id}', ${ei})">
+                <div class="ex-check">✓</div>
+                <div class="ex-info">
+                  <div class="ex-name">${ex.name}</div>
+                  ${ex.detail ? `<div class="ex-detail">${ex.detail}</div>` : ''}
+                </div>
+                <div class="ex-sets">${ex.sets}</div>
+              </li>
+            `).join('')}
+          </ul>
+          <div class="timer-section">
+            <div class="timer-label">⏱ 组间休息</div>
+            <div class="timer-display" id="timer-${day.id}">2:00</div>
+            <div class="timer-btns">
+              <button class="timer-btn" onclick="startTimer('${day.id}', 120)">2:00</button>
+              <button class="timer-btn" onclick="startTimer('${day.id}', 90)">1:30</button>
+              <button class="timer-btn" onclick="startTimer('${day.id}', 60)">1:00</button>
+              <button class="timer-btn" onclick="stopTimer('${day.id}')">停止</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Restart timers if any were running
+  planData.forEach(day => {
+    const display = document.getElementById(`timer-${day.id}`);
+    if (display && timers[day.id] && timers[day.id].running) {
+      updateTimerDisplay(day.id);
+    }
+  });
+}
+
+// ═══════════════ TIMER ═══════════════
+const timers = {};
+
+function updateTimerDisplay(dayId) {
+  const t = timers[dayId];
+  if (!t) return;
+  const el = document.getElementById(`timer-${dayId}`);
+  if (!el) return;
+  const m = Math.floor(t.remaining / 60);
+  const s = t.remaining % 60;
+  el.textContent = `${m}:${String(s).padStart(2, '0')}`;
+  if (t.remaining <= 0 && t.running) {
+    t.running = false;
+    el.textContent = '⏰ 时间到!';
+    el.style.color = '#ef4444';
+    if (t.interval) clearInterval(t.interval);
+    setTimeout(() => { el.style.color = ''; el.textContent = '2:00'; }, 3000);
+  }
+}
+
+function startTimer(dayId, seconds) {
+  if (timers[dayId]?.interval) clearInterval(timers[dayId].interval);
+  timers[dayId] = { remaining: seconds, running: true, interval: null };
+  const el = document.getElementById(`timer-${dayId}`);
+  if (el) el.style.color = '';
+  updateTimerDisplay(dayId);
+  timers[dayId].interval = setInterval(() => {
+    timers[dayId].remaining--;
+    updateTimerDisplay(dayId);
+  }, 1000);
+}
+
+function stopTimer(dayId) {
+  if (timers[dayId]?.interval) clearInterval(timers[dayId].interval);
+  timers[dayId] = { remaining: 120, running: false, interval: null };
+  const el = document.getElementById(`timer-${dayId}`);
+  if (el) { el.textContent = '2:00'; el.style.color = ''; }
+}
+
+function resetWeek() {
+  if (!confirm('确定重置本周所有进度？')) return;
+  const wk = getActiveWeekKey();
+  state[wk] = {};
+  ensureWeek(wk);
+  saveState();
+  renderAll();
+}
+
+// ═══════════════ INIT ═══════════════
+loadState();
+const wk = getActiveWeekKey();
+ensureWeek(wk);
+saveState();
+renderAll();
+</script>
+
+</body>
+</html>
